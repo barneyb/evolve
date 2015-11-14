@@ -1,4 +1,4 @@
-package goevolve
+package evolve
 
 import (
 	"math/rand"
