@@ -35,7 +35,7 @@ reproduction happens from a single individual (asexual) and each generation
 has only a single survivor which passes it's genes on.
 */
 type Evolution struct {
-	Latest      *Genome
+	Latest      *Individual
 	Ancestry    []Genome
 	Development func(*Genome) *Individual
 }
@@ -46,7 +46,7 @@ function that can take a Genome and create an Individual from it.
 */
 func New(start *Genome, development func(*Genome) *Individual) *Evolution {
 	return &Evolution{
-		start,
+		development(start),
 		[]Genome{},
 		development,
 	}
@@ -61,7 +61,7 @@ selected as the survivor for the following generation to evolve from.
 func (e *Evolution) Evolve(size int) []Individual {
 	nextGen := make([]Individual, size)
 	for i := 0; i < size; i++ {
-		nextGen[i] = *e.Development(Reproduce(e.Latest))
+		nextGen[i] = *e.Development(Reproduce(e.Latest.Genotype))
 	}
 	return nextGen
 }
@@ -72,6 +72,6 @@ is the "natural selection" part of the evolutionary process.  Only one
 Individual should be selected per generation.
 */
 func (e *Evolution) Select(survivor *Individual) {
-	e.Ancestry = append(e.Ancestry, *e.Latest)
-	e.Latest = survivor.Genotype
+	e.Ancestry = append(e.Ancestry, *e.Latest.Genotype)
+	e.Latest = survivor
 }

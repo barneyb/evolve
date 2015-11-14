@@ -7,17 +7,20 @@ import (
 	"testing"
 )
 
+func dev(g *Genome) *Individual {
+	return &Individual{
+		Genotype: g,
+	}
+}
+
 func TestNew(t *testing.T) {
 	g := Genome([]int{1, 2, 3})
-	dev := func(*Genome) *Individual {
-		return nil
-	}
 	e := New(&g, dev)
 	if e.Latest == nil {
 		fmt.Println("latest wasn't set")
 		t.FailNow()
 	}
-	if !reflect.DeepEqual(*e.Latest, g) {
+	if !reflect.DeepEqual(*e.Latest.Genotype, g) {
 		fmt.Println("latest was set incorrectly")
 		t.FailNow()
 	}
@@ -34,11 +37,6 @@ func TestNew(t *testing.T) {
 func TestEvolve(t *testing.T) {
 	rand.Seed(1980)
 	g := Genome([]int{0, 0, 0, 0})
-	dev := func(g *Genome) *Individual {
-		return &Individual{
-			Genotype: g,
-		}
-	}
 	e := New(&g, dev)
 	ng := e.Evolve(3)
 	if ng == nil {
@@ -68,8 +66,8 @@ func TestSelect(t *testing.T) {
 	e := New(&g, dev)
 	ng := e.Evolve(1)[0]
 	e.Select(&ng)
-	if !reflect.DeepEqual(ng.Genotype, e.Latest) {
-		fmt.Printf("latest wasn't updated: %v vs %v\n", ng.Genotype, e.Latest)
+	if ng != *e.Latest {
+		fmt.Printf("latest wasn't updated: %v vs %v\n", ng, *e.Latest)
 		t.FailNow()
 	}
 	if len(e.Ancestry) != 1 {
