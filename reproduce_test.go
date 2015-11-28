@@ -8,9 +8,19 @@ import (
 )
 
 func TestStableCase(t *testing.T) {
-	rand.Seed(1980)
+	ReproduceSeed(1980)
 	parent := Genome([]int{5, 5, 5})
 	child := Reproduce(&parent)
+	if !reflect.DeepEqual(*child, Genome([]int{5, 6, 5})) {
+		fmt.Printf("didn't mutate correctly: %v\n", *child)
+		t.FailNow()
+	}
+}
+
+func TestStableCaseRand(t *testing.T) {
+	rand := rand.New(rand.NewSource(1980))
+	parent := Genome([]int{5, 5, 5})
+	child := ReproduceRand(&parent, rand)
 	if !reflect.DeepEqual(*child, Genome([]int{5, 6, 5})) {
 		fmt.Printf("didn't mutate correctly: %v\n", *child)
 		t.FailNow()
