@@ -58,11 +58,6 @@ func TestEvolve(t *testing.T) {
 func TestSelect(t *testing.T) {
 	rand.Seed(1980)
 	g := Genome([]int{0, 0, 0, 0})
-	dev := func(g *Genome) *Individual {
-		return &Individual{
-			Genotype: g,
-		}
-	}
 	e := New(&g, dev)
 	ng := e.Evolve(1)[0]
 	e.Select(&ng)
