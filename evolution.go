@@ -2,6 +2,7 @@ package evolve
 
 import (
 	"fmt"
+	"math/rand"
 )
 
 /*
@@ -38,6 +39,7 @@ type Evolution struct {
 	Latest      *Individual
 	Ancestry    []Genome
 	Development func(*Genome) *Individual
+	Rand        *rand.Rand
 }
 
 /*
@@ -49,6 +51,21 @@ func New(start *Genome, development func(*Genome) *Individual) *Evolution {
 		development(start),
 		[]Genome{},
 		development,
+		rand.New(rand.NewSource(rand.Int63())),
+	}
+}
+
+/*
+NewRand starts a new Evolution with the given starting Genome and a development
+function that can take a Genome and create an Individual from it, plus a *Rand
+to use for entropy through the process.
+*/
+func NewRand(start *Genome, development func(*Genome) *Individual, rand *rand.Rand) *Evolution {
+	return &Evolution{
+		development(start),
+		[]Genome{},
+		development,
+		rand,
 	}
 }
 
@@ -61,7 +78,7 @@ selected as the survivor for the following generation to evolve from.
 func (e *Evolution) Evolve(size int) []Individual {
 	nextGen := make([]Individual, size)
 	for i := 0; i < size; i++ {
-		nextGen[i] = *e.Development(Reproduce(e.Latest.Genotype))
+		nextGen[i] = *e.Development(ReproduceRand(e.Latest.Genotype, e.Rand))
 	}
 	return nextGen
 }

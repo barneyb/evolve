@@ -32,6 +32,20 @@ func TestNew(t *testing.T) {
 		fmt.Println("didn't save Development")
 		t.FailNow()
 	}
+	if e.Rand == nil {
+		fmt.Println("didn't initialize Rand")
+		t.FailNow()
+	}
+}
+
+func TestNewRand(t *testing.T) {
+	g := Genome([]int{1, 2, 3})
+	r := rand.New(rand.NewSource(12345))
+	e := NewRand(&g, dev, r)
+	if e.Rand != r {
+		fmt.Println("didn't save Rand")
+		t.FailNow()
+	}
 }
 
 func TestEvolve(t *testing.T) {
